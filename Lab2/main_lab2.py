@@ -1,5 +1,12 @@
+import numpy as np
+
 from io_functions import IOFunctions
 from linear_regression import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression as LinearRegressionSK
+from sklearn.linear_model import LinearRegression as LR
+import pandas as pd
+
 import matplotlib.pyplot as plt
 # To test
 from sklearn.metrics import mean_squared_error
@@ -16,16 +23,16 @@ print(df.head(10))
 # 2.1
 validation_proportion = 0.2
 
-test = df.sample(frac=validation_proportion, random_state=42)
-train = df.drop(test.index)
+validation = df.sample(frac=validation_proportion, random_state=42)
+train = df.drop(validation.index)
 a, b = LinearRegression.calculate_linear_regression(train, "age", "2020")
 print(f"Result: a={a} b={b}")
 
 # 2.2
-# LinearRegression.plot_linear_regression(df, "age", "2020", a, b)
+LinearRegression.plot_linear_regression(df, "age", "2020", a, b)
 
 # 2.3
-augment_df = LinearRegression.add_predicted(test, "age", "2020", a, b)
+augment_df = LinearRegression.add_predicted(validation, "age", "2020", a, b)
 print(augment_df.head(10))
 
 # 2.4
@@ -51,8 +58,8 @@ df3_grouped_by_age_group = df3.groupby(["age"], as_index=False)["2020"].mean()
 print(df3_grouped_by_age_group.head(10))
 
 # 3.2
-test = df3_grouped_by_age_group.sample(frac=validation_proportion, random_state=42)
-train = df3_grouped_by_age_group.drop(test.index)
+validation = df3_grouped_by_age_group.sample(frac=validation_proportion, random_state=42)
+train = df3_grouped_by_age_group.drop(validation.index)
 a, b = LinearRegression.calculate_linear_regression(train, "age", "2020")
 print(f"Result: a={a} b={b}")
 
@@ -60,7 +67,8 @@ print(f"Result: a={a} b={b}")
 LinearRegression.plot_linear_regression(df3_grouped_by_age_group, "age", "2020", a, b)
 
 # 3.4
-augment_df = LinearRegression.add_predicted(test, "age", "2020", a, b)
+# Which dataset? Train, validation, test?
+augment_df = LinearRegression.add_predicted(train, "age", "2020", a, b)
 print(augment_df.head(10))
 
 # 3.5
@@ -68,3 +76,55 @@ mse = LinearRegression.calculate_mse(augment_df, "2020", "Predicted")
 print(mse)
 
 # 3.6 Much higher MSE since this is a curve and not a simple linear.
+
+# 4.1 Linear regression works well for linear graphs but not for curves.
+
+# 4.2 The prediction needs to be a polynomial.
+
+# 5.1
+X = np.reshape(validation["age"].values, (-1, 1))
+#X = validation.iloc[:,-1:].values
+y = np.reshape(validation["2020"].values, (-1, 1))
+#x_compare = 6*np.random.rand(100,1)-3
+#lr = LR()
+#pr = LR()
+#lr.fit(X, y)
+#X_fit = np.arange(250, 600, 10)[:, np.newaxis]
+#y_lin_fit = lr.predict(X_fit)
+
+
+def repeat(x):
+    # Why False?
+    poly_features = PolynomialFeatures(degree=x, include_bias=False)
+    X_poly = poly_features.fit_transform(X)
+    lin_reg = LinearRegressionSK()
+    lin_reg.fit(X_poly, y)
+    y_lin_fit = lin_reg.predict(X_poly)
+    #print(lin_reg.coef_, lin_reg.intercept_)
+    df5 = pd.DataFrame(list(zip(X, y, y_lin_fit)), columns=["age", "2020", "predicted"])
+    mse = LinearRegression.calculate_mse(df5, "2020", "predicted")
+    print("MSE for poly:",x,": ", mse)
+
+#Why False?
+repeat(2)
+repeat(3)
+repeat(5)
+repeat(8)
+
+
+poly_features = PolynomialFeatures(degree=8, include_bias=False)
+X_poly = poly_features.fit_transform(X)
+lin_reg = LinearRegressionSK()
+lin_reg.fit(X_poly, y)
+y_lin_fit = lin_reg.predict(X_poly)
+#print(lin_reg.coef_, lin_reg.intercept_)
+df5 = pd.DataFrame(list(zip(X, y, y_lin_fit)), columns=["age", "2020", "predicted"])
+mse = LinearRegression.calculate_mse(df5, "2020", "predicted")
+
+plt.scatter(X,y)
+
+plt.scatter(X,y_lin_fit)
+plt.tight_layout()
+plt.show()
+
+
