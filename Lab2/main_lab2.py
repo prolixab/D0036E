@@ -82,6 +82,7 @@ print(mse)
 # 4.2 The prediction needs to be a polynomial.
 
 # 5.1
+validation = validation.sort_values("age")
 X = np.reshape(validation["age"].values, (-1, 1))
 y = np.reshape(validation["2020"].values, (-1, 1))
 
@@ -116,8 +117,13 @@ df5 = pd.DataFrame(list(zip(X, y, y_lin_fit)), columns=["age", "2020", "predicte
 mse = LinearRegression.calculate_mse(df5, "2020", "predicted")
 
 # 5.4
-# TODO Add linear,curve through points.
-plt.scatter(X, y)
-plt.scatter(X, y_lin_fit)
+# TODO Better polynomial plot
+plt.scatter(X, y, label='Data points')
+plt.plot(df3_grouped_by_age_group["age"], a + b * df3_grouped_by_age_group["age"], marker='x', label='Regression, x=1')
+plt.plot(X, y_lin_fit, marker='o', label='Polynomial, x=8')
+plt.legend(loc="upper left")
+plt.xlabel("Age")
+plt.ylabel("Average Income")
+plt.title("Linear Regression w/t Polynomial")
 plt.tight_layout()
 plt.show()
