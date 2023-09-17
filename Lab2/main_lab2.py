@@ -86,25 +86,27 @@ X = np.reshape(validation["age"].values, (-1, 1))
 y = np.reshape(validation["2020"].values, (-1, 1))
 
 
-def repeat(x):
+def calculateRegressionAndMSE(x):
     # Why False?
     poly_features = PolynomialFeatures(degree=x, include_bias=False)
     X_poly = poly_features.fit_transform(X)
     lin_reg = LinearRegressionSK()
     lin_reg.fit(X_poly, y)
     y_lin_fit = lin_reg.predict(X_poly)
-    # print(lin_reg.coef_, lin_reg.intercept_)
     df5 = pd.DataFrame(list(zip(X, y, y_lin_fit)), columns=["age", "2020", "predicted"])
     mse = LinearRegression.calculate_mse(df5, "2020", "predicted")
     print("MSE for poly:", x, ": ", mse)
 
 
-# Why False?
-repeat(2)
-repeat(3)
-repeat(5)
-repeat(8)
+# 5.2
+calculateRegressionAndMSE(2)
+calculateRegressionAndMSE(3)
+calculateRegressionAndMSE(5)
+calculateRegressionAndMSE(8)
 
+# 5.3 ??
+
+# 5.3  8 is best, since it results in the lowest MSE
 poly_features = PolynomialFeatures(degree=8, include_bias=False)
 X_poly = poly_features.fit_transform(X)
 lin_reg = LinearRegressionSK()
@@ -113,6 +115,8 @@ y_lin_fit = lin_reg.predict(X_poly)
 df5 = pd.DataFrame(list(zip(X, y, y_lin_fit)), columns=["age", "2020", "predicted"])
 mse = LinearRegression.calculate_mse(df5, "2020", "predicted")
 
+# 5.4
+# TODO Add linear,curve through points.
 plt.scatter(X, y)
 plt.scatter(X, y_lin_fit)
 plt.tight_layout()
