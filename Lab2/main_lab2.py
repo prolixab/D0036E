@@ -83,14 +83,7 @@ print(mse)
 
 # 5.1
 X = np.reshape(validation["age"].values, (-1, 1))
-#X = validation.iloc[:,-1:].values
 y = np.reshape(validation["2020"].values, (-1, 1))
-#x_compare = 6*np.random.rand(100,1)-3
-#lr = LR()
-#pr = LR()
-#lr.fit(X, y)
-#X_fit = np.arange(250, 600, 10)[:, np.newaxis]
-#y_lin_fit = lr.predict(X_fit)
 
 
 def repeat(x):
@@ -100,31 +93,27 @@ def repeat(x):
     lin_reg = LinearRegressionSK()
     lin_reg.fit(X_poly, y)
     y_lin_fit = lin_reg.predict(X_poly)
-    #print(lin_reg.coef_, lin_reg.intercept_)
+    # print(lin_reg.coef_, lin_reg.intercept_)
     df5 = pd.DataFrame(list(zip(X, y, y_lin_fit)), columns=["age", "2020", "predicted"])
     mse = LinearRegression.calculate_mse(df5, "2020", "predicted")
-    print("MSE for poly:",x,": ", mse)
+    print("MSE for poly:", x, ": ", mse)
 
-#Why False?
+
+# Why False?
 repeat(2)
 repeat(3)
 repeat(5)
 repeat(8)
-
 
 poly_features = PolynomialFeatures(degree=8, include_bias=False)
 X_poly = poly_features.fit_transform(X)
 lin_reg = LinearRegressionSK()
 lin_reg.fit(X_poly, y)
 y_lin_fit = lin_reg.predict(X_poly)
-#print(lin_reg.coef_, lin_reg.intercept_)
 df5 = pd.DataFrame(list(zip(X, y, y_lin_fit)), columns=["age", "2020", "predicted"])
 mse = LinearRegression.calculate_mse(df5, "2020", "predicted")
 
-plt.scatter(X,y)
-
-plt.scatter(X,y_lin_fit)
+plt.scatter(X, y)
+plt.scatter(X, y_lin_fit)
 plt.tight_layout()
 plt.show()
-
-
