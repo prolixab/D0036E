@@ -43,7 +43,7 @@ class KMeans:
             KMeans.assign_centroids(self.df, self.x, self.y, self.centroids)
             # print(self.df)
 
-            self.centroids = KMeans.calculate_all_centroids(self.df, self.x, self.y)
+            self.centroids = calculate_all_centroids(self.df, self.x, self.y)
             print(self.centroids)
 
     @staticmethod
@@ -74,14 +74,6 @@ class KMeans:
         return closet_centroid
 
     @staticmethod
-    def calculate_all_centroids(df, x, y):
-        df2 = df.groupby("centroid").mean()
-        centroids = []
-        for index, row in df2.iterrows():
-            centroids.append([row[x], row[y]])
-        return centroids
-
-    @staticmethod
     def find_center_point(x_point_list, y_point_list):
         x_sum = 0
         y_sum = 0
@@ -94,3 +86,14 @@ class KMeans:
         x_center = x_sum / x_len
         y_center = y_sum / y_len
         return [x_center, y_center]
+
+
+def calculate_all_centroids(df, x, y):
+    df2 = df.groupby("centroid").agg({
+                                            y: 'mean',
+                                            x: 'mean',
+                                            })
+    centroids = []
+    for index, row in df2.iterrows():
+        centroids.append([row[x], row[y]])
+    return centroids

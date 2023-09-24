@@ -1,6 +1,7 @@
 from io_functions import IOFunctions
 import matplotlib.pyplot as plt
 from kmeans import KMeans
+from silhouette import Silhouette
 
 # 1.1
 df = IOFunctions.read_file_to_dataframe("inc_vs_rent.csv")
@@ -19,3 +20,8 @@ xs = [x[0] for x in centroids]
 ys = [x[1] for x in centroids]
 plt.scatter(xs,ys,marker="x")
 plt.show()
+
+# 2.1
+sm = Silhouette(df,km.get_centroids(),"Annual rent sqm", "Avg yearly inc KSEK")
+#avg_dist=sm.a(5,10,0)
+#print(avg_dist)
