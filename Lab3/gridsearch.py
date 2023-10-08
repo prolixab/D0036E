@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 class GridSearch:
 
     def __init__(self, a, b, step, func):
@@ -7,14 +8,15 @@ class GridSearch:
         self.b = b
         self.step = step
         self.func = func
-        self.hyperparameter_list=[]
-        self.result_list=[]
+        self.hyperparameter_list = []
+        self.result_list = []
 
     def perform_search(self):
-        self.hyperparameter_list=[]
-        self.result_list=[]
+        self.hyperparameter_list = []
+        self.result_list = []
         for x in range(self.a, self.b, self.step):
             self.hyperparameter_list.append(x)
+
             result = self.func(x)
             self.result_list.append(result)
 
