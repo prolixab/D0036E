@@ -9,7 +9,8 @@ from stats import StatFunctions
 class KMeans:
 
     def __init__(self, df, x, y, k, no_iterations):
-        self.df = df
+        self.previous_centroids = None
+        self.df = df.copy(deep=True)
         self.x = x
         self.y = y
         self.k = k
@@ -41,13 +42,30 @@ class KMeans:
 
         # Assignment step - assign each point to nearest centroid
         print(self.centroids)
+        convergence = False
         for i in range(self.no_iterations):
             KMeans.assign_centroids(self.df, self.x, self.y, self.centroids)
-            # print(self.df)
-
+            self.previous_centroids=self.centroids.copy()
             self.centroids = self.calculate_all_centroids(self.df, self.x, self.y)
+            diff=self.compare_centroids()
+            if diff < 0.1:
+                convergence = True
+                break
+            print(f"diff:{diff}")
             print(self.centroids)
+        if convergence:
+            print("Convergence found - halting.")
+        else:
+            print("Convergence NOT found - halting.")
+        print(f"Final centroids:{self.centroids}")
 
+    def compare_centroids(self):
+        if len(self.centroids)!=len(self.previous_centroids):
+            return 1000000
+        sum=0
+        for index,point in enumerate(self.centroids):
+            sum+=self.calculate_euclidean(point[0],point[1],self.previous_centroids[index][0],self.previous_centroids[index][1])
+        return sum
     @staticmethod
     def assign_centroids(df, x, y, centroids):
         # Assignment step - assign each point to nearest centroid
@@ -91,6 +109,7 @@ class KMeans:
 
     @staticmethod
     def calculate_all_centroids(df, x, y):
+        # TODO What happens if the mean is not assigned to any?
         df2 = df.groupby("centroid").agg({
             y: 'mean',
             x: 'mean',
@@ -100,10 +119,16 @@ class KMeans:
             centroids.append([row[x], row[y]])
         return centroids
 
+    def predict(self, x, y):
+        nearest_centroid = self.calculate_nearest_centroid([x, y], self.centroids)
+        return nearest_centroid
+
     def graph_results(self):
         plt.scatter(self.df[self.x], self.df[self.y], c=self.df["centroid"])
         xs = [x[0] for x in self.centroids]
         ys = [x[1] for x in self.centroids]
+        plt.xlabel(self.x)
+        plt.ylabel(self.y)
         plt.scatter(xs, ys, marker="x")
         plt.show()
 
@@ -153,7 +178,7 @@ class KMeans:
         :param centroid: this is needed to know which centroid is the next nearest..
         :return:
         """
-        next_nearest = self.find_next_nearest_cluster_centroid(point_x, point_y, centroid)
+        next_nearest = self.find_next_nearest_cluster_centroid(point_x, point_y)
         distance_sum = 0
         df2 = self.df.where(self.df.centroid == next_nearest).dropna(how='all')
         for index, row in df2.iterrows():
@@ -162,7 +187,7 @@ class KMeans:
         avg_distance = distance_sum / len(df2)
         return avg_distance
 
-    def find_next_nearest_cluster_centroid(self, point_x, point_y, centroid):
+    def find_next_nearest_cluster_centroid(self, point_x, point_y):
         # Deal with only one centroid
         if len(self.centroids) == 1:
             return 0
