@@ -116,3 +116,47 @@ ax3.autoscale(False)
 ax3.plot(x, y, 'o', markeredgecolor='r', markerfacecolor='none', markersize=10)
 
 plt.show()
+
+# Task 6
+from skimage.feature import match_template
+
+filename_path = '/home/andrew/PycharmProjects/LTU/Labs/Lab4/'
+tim_filename = os.path.join(filename_path, 'tim.jpg')
+eye_filename = os.path.join(filename_path, 'eye.jpg')
+
+tim_image = rgb2gray(io.imread(tim_filename))
+eye_image = rgb2gray(io.imread(eye_filename))
+
+print(tim_image.shape)
+print(eye_image.shape)
+
+
+result = match_template(tim_image, eye_image)
+ij = np.unravel_index(np.argmax(result), result.shape)
+x, y = ij[::-1]
+#
+fig = plt.figure(figsize=(8, 3))
+ax1 = plt.subplot(1, 3, 1)
+ax2 = plt.subplot(1, 3, 2)
+ax3 = plt.subplot(1, 3, 3, sharex=ax2, sharey=ax2)
+#
+ax1.imshow(eye_image, cmap=plt.cm.gray)
+ax1.set_axis_off()
+ax1.set_title('Template')
+#
+ax2.imshow(tim_image, cmap=plt.cm.gray)
+ax2.set_axis_off()
+ax2.set_title('Tim')
+# highlight matched region
+heye, weye  = eye_image.shape
+rect = plt.Rectangle((x, y), weye, heye, edgecolor='r', facecolor='none')
+ax2.add_patch(rect)
+#
+ax3.imshow(result)
+ax3.set_axis_off()
+ax3.set_title('`match_template`\nresult')
+# # highlight matched region
+ax3.autoscale(False)
+ax3.plot(x, y, 'o', markeredgecolor='r', markerfacecolor='none', markersize=10)
+#
+plt.show()
