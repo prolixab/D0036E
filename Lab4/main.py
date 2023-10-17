@@ -88,10 +88,9 @@ plt.show()
 from skimage import data
 from skimage.feature import match_template
 
-#Extracting single coin image from coins
+# Extracting single coin image from coins
 image = data.coins()
 coin = image[170:220, 75:130]
-
 
 result = match_template(image, coin)
 ij = np.unravel_index(np.argmax(result), result.shape)
@@ -124,7 +123,8 @@ ax3.plot(x, y, 'o', markeredgecolor='r', markerfacecolor='none', markersize=10)
 plt.show()
 
 # Task 6
-from skimage.feature import match_template
+# from skimage.feature import match_template
+from template import match_template
 
 filename_path = '/home/andrew/PycharmProjects/LTU/Labs/Lab4/'
 tim_filename = os.path.join(filename_path, 'tim.jpg')
@@ -135,7 +135,6 @@ eye_image = rgb2gray(io.imread(eye_filename))
 
 print(tim_image.shape)
 print(eye_image.shape)
-
 
 result = match_template(tim_image, eye_image)
 ij = np.unravel_index(np.argmax(result), result.shape)
@@ -154,7 +153,7 @@ ax2.imshow(tim_image, cmap=plt.cm.gray)
 ax2.set_axis_off()
 ax2.set_title('Tim')
 # highlight matched region
-heye, weye  = eye_image.shape
+heye, weye = eye_image.shape
 rect = plt.Rectangle((x, y), weye, heye, edgecolor='r', facecolor='none')
 ax2.add_patch(rect)
 #
