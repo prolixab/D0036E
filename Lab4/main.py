@@ -12,9 +12,15 @@ from skimage import io
 
 coins_image = io.imread(coins_filename)
 astro_image = io.imread(astro_filename)
+
+'''
+Note: imread returns an array where the different color bands/channels are stored in the third dimension, 
+such that a gray-image is MxN, an RGB-image MxNx3 and an RGBA-image MxNx4.
+'''
+
 print(f"Coins image has shape {coins_image.shape} and type {coins_image.dtype}")
 print(f"Astro image has shape {astro_image.shape} and type {astro_image.dtype}")
-print(f"In Astro point 1,100,1 has value {astro_image[1, 100, 1]}")
+print(f"In Astro point 1,100 has value R{astro_image[1, 100, 0]},G{astro_image[1, 100, 1]},B{astro_image[1, 100, 2]}")
 print(f"In Coins point 1,100 has value {coins_image[1, 100]}")
 # io.imshow(image)
 # io.show()
@@ -28,6 +34,7 @@ from skimage.color import rgb2gray
 grayscale = rgb2gray(astro_image)
 print(f"Before grayscale conversion astro image has shape {astro_image.shape} and type {astro_image.dtype}")
 print(f"After grayscale conversion astro image has shape {grayscale.shape} and type {grayscale.dtype}")
+# Grayscale consists of floats because of conversion algorithm: Y = 0.2125 R + 0.7154 G + 0.0721 B
 io.imshow(grayscale)
 io.show()
 
@@ -46,6 +53,7 @@ image_rescaled_05 = rescale(astro_image, 0.5, anti_aliasing=False, channel_axis=
 image_rescaled_025 = rescale(astro_image, 0.25, anti_aliasing=False, channel_axis=2)
 image_resized = resize(astro_image, (astro_image.shape[0] / 4, astro_image.shape[1] / 4), anti_aliasing=True)
 
+# Note - image_resized and image_rescaled should be identical, but one is antialiased and therefore smoother
 ax[0].imshow(image_rescaled_075)
 ax[0].set_title("Rescaled 0.75")
 
@@ -67,8 +75,6 @@ import numpy as np
 from skimage.exposure import histogram
 import matplotlib.pyplot as plt
 from skimage.util import img_as_ubyte
-
-# grayscale = rgb2gray(coins_image)
 
 ax = plt.hist(coins_image.ravel(), bins=256)
 print(coins_image.dtype)
