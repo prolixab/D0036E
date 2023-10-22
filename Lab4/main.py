@@ -2,13 +2,14 @@ import skimage
 import os
 import matplotlib.pyplot as plt
 
-filename_path = '/home/andrew/PycharmProjects/LTU/Labs/Lab4/'
-coins_filename = os.path.join(filename_path, 'coins.jpg')
-astro_filename = os.path.join(filename_path, 'astronaut.jpg')
+filename_path = './'
 
 from skimage import io
 
 ## Task 1
+
+coins_filename = os.path.join(filename_path, 'coins.jpg')
+astro_filename = os.path.join(filename_path, 'astronaut.jpg')
 
 coins_image = io.imread(coins_filename)
 astro_image = io.imread(astro_filename)
@@ -126,7 +127,6 @@ plt.show()
 # from skimage.feature import match_template
 from template import match_template
 
-filename_path = '/home/andrew/PycharmProjects/LTU/Labs/Lab4/'
 tim_filename = os.path.join(filename_path, 'tim.jpg')
 eye_filename = os.path.join(filename_path, 'eye.jpg')
 
